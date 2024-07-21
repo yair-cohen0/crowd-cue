@@ -44,6 +44,6 @@ COPY --from=builder app/apps/server/dist ./
 COPY --from=builder app/apps/client/dist ./static
 
 
-EXPOSE 80
+EXPOSE 3000
 
 CMD ["node", "main"]
