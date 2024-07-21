@@ -40,7 +40,7 @@ export function SearchBar({
                     ...sx,
                 }}
                 onChange={debounce(
-                    (e) => onChange?.(e as React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>),
+                    (e) => onChange?.(e),
                     debounceTime,
                 )}
             />
