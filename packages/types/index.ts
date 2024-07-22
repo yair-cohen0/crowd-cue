@@ -1,5 +1,5 @@
 export interface IArtist {
-    id: string;
+    id?: string;
     name: string;
     picture: string;
     spotify_id: string;
