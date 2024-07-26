@@ -11,7 +11,7 @@ export const getGenres = async ({
     limit: number;
 }): Promise<IGenre[]> =>
     (
-        await axiosInstance.get(`${API_URL}/genre${term ? `/${term}` : ''}`, {
+        await axiosInstance.get(`${API_URL}/genres${term ? `/${term}` : ''}`, {
             params: { skip, limit },
         })
     ).data as IGenre[];
