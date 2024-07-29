@@ -1,17 +1,17 @@
-import { IGenre } from '../interfaces/genre.interface.ts';
 import { API_URL, axiosInstance } from './index';
+import { IGenre } from 'types';
 
 export const getGenres = async ({
-    term,
+    name,
     skip,
     limit,
 }: {
-    term: string | undefined;
+    name: string | undefined;
     skip: number;
     limit: number;
 }): Promise<IGenre[]> =>
     (
-        await axiosInstance.get(`${API_URL}/genres${term ? `/${term}` : ''}`, {
-            params: { skip, limit },
+        await axiosInstance.get(`${API_URL}/genres`, {
+            params: { skip, limit, name },
         })
     ).data as IGenre[];

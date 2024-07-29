@@ -15,7 +15,7 @@ export function GenreCarousel({ searchTerm }: { searchTerm?: string }) {
         fetchNextPage,
     } = useInfiniteQuery({
         queryKey: ['genres', { searchTerm }],
-        queryFn: async ({ pageParam = 0 }) => getGenres({ term: searchTerm, skip: pageParam as number, limit }),
+        queryFn: async ({ pageParam = 0 }) => getGenres({ name: searchTerm, skip: pageParam as number, limit }),
         getNextPageParam: (_, allPages) => allPages.length * limit,
     });
 

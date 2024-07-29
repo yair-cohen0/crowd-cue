@@ -5,3 +5,9 @@ export interface IArtist {
     spotify_id: string;
     genres: string[];
 }
+
+export interface IGenre {
+    id: string;
+    name: string;
+    picture: Buffer;
+}

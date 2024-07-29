@@ -1,5 +1,5 @@
 import { Box, Card, debounce, Theme, Typography } from '@mui/material';
-import { IGenre } from '../../interfaces/genre.interface.ts';
+import { IGenre } from 'types';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { useEffect, useState } from 'react';
 import { useSelectionStore } from '../../stores/selections.store';
