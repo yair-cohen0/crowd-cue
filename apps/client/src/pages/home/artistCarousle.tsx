@@ -15,7 +15,7 @@ export function ArtistCarousel({ searchTerm }: { searchTerm?: string }) {
         fetchNextPage,
     } = useInfiniteQuery({
         queryKey: ['artists', searchTerm],
-        queryFn: async ({ pageParam = 0 }) => getArtists({ term: searchTerm, skip: pageParam as number, limit }),
+        queryFn: async ({ pageParam = 0 }) => getArtists({ name: searchTerm, skip: pageParam as number, limit }),
         getNextPageParam: (_, allPages) => allPages.length * limit,
     });
 
