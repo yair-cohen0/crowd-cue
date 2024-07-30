@@ -11,7 +11,7 @@ export const getArtists = async ({
     limit: number;
 }): Promise<IArtist[]> =>
     (
-        await axiosInstance.get(`${API_URL}/artists`, {
+        await axiosInstance.get(`${API_URL}/artists${name ? '/spotify' : ''}`, {
             params: { name, skip, limit },
         })
     ).data as IArtist[];

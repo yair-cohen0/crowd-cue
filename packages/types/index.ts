@@ -1,13 +1,14 @@
-export interface IArtist {
+export type IArtist = {
     id: string;
     name: string;
     picture: string;
-    spotify_id: string;
+    spotifyId: string;
     genres: string[];
-}
+    popularity: number;
+};
 
-export interface IGenre {
+export type IGenre = {
     id: string;
     name: string;
     picture: Buffer;
-}
+};
