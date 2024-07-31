@@ -1,10 +1,12 @@
+export const contactMethod = ['sms', 'email'] as const;
+
 export type SelectionTypes = 'artists' | 'genres';
-export type ContactMethod = 'sms' | 'email';
 export type Selection = { [key in SelectionTypes]: string[] };
 export type IVoter = {
-    contactMethod: ContactMethod;
+    contactMethod: (typeof contactMethod)[number];
+    contactValue: string;
     didVote: boolean;
-    selection: Selection;
+    selection: Partial<Selection>;
 };
 
 export type IEvent = {
