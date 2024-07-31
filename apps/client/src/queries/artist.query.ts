@@ -1,4 +1,4 @@
-import { IArtist } from '../interfaces/artist.interface.ts';
+import { IArtist } from 'types';
 import { API_URL, axiosInstance } from './index';
 
 export const getArtists = async ({

@@ -1,5 +1,5 @@
 import { Box, Card, CardMedia, debounce, Theme, Typography } from '@mui/material';
-import { IArtist } from '../../interfaces/artist.interface.ts';
+import { IArtist } from 'types';
 import TextOverflow from 'react-text-overflow';
 import { useEffect, useState } from 'react';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
