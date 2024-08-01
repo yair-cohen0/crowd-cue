@@ -2,23 +2,19 @@ import './App.css';
 import { Home } from './pages/home';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
-import { Authorization } from './pages/authorization';
+import { getEvent } from './queries/event.query.ts';
 
 const queryClient = new QueryClient();
 
 const router = createHashRouter([
     {
-        path: '/',
+        path: '/*',
         element: <Home />,
-        // loader: rootLoader,
+        loader: async ({ params }) => getEvent(params['*']),
     },
     {
         path: '/unauthorized',
         element: <div>unauthorized</div>,
-    },
-    {
-        path: '/*',
-        element: <Authorization />,
     },
 ]);
 

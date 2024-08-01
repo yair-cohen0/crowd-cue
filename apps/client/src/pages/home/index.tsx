@@ -3,12 +3,21 @@ import { GenreCarousel } from './genreCarousel.tsx';
 import './index.scss';
 import { ArtistCarousel } from './artistCarousle.tsx';
 import { SearchBar } from './searchBar.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelectionStore } from '../../stores/selections.store';
 import { Submit } from './submit';
 import { SubmitDialog } from './submitDialog';
+import { useLoaderData } from 'react-router-dom';
+import { IEvent } from 'types';
 
 export function Home() {
+    const event = useLoaderData() as IEvent;
+    useEffect(() => {
+        if (!event) {
+            window.location.hash = 'unauthorized';
+        }
+    }, [event]);
+
     const [artistTerm, setArtistTerm] = useState<string>();
     const [genreTerm, setGenreTerm] = useState<string>();
 

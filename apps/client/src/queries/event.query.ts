@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { API_URL } from './index';
-import { IEvent } from '../interfaces/event.interface.ts';
+import { IEvent } from 'types';
 
 export const getEvent = async (token: string): Promise<IEvent> =>
-    (await axios.get(`${API_URL}/event/info/${token}`)).data as IEvent;
+    (await axios.get(`${API_URL}/events/token/${token}`)).data as IEvent;
