@@ -1,9 +1,7 @@
-export const contactMethod = ['sms', 'email'] as const;
-
 export type SelectionTypes = 'artists' | 'genres';
 export type Selection = { [key in SelectionTypes]: string[] };
 export type IVoter = {
-    contactMethod: (typeof contactMethod)[number];
+    contactMethod: 'sms' | 'email';
     contactValue: string;
     didVote: boolean;
     selection: Partial<Selection>;
