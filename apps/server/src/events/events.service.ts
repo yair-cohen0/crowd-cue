@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, ProjectionType } from 'mongoose';
 import { _Event, EventDocument } from './schemes/event.scheme';
 import { AddVotersDto } from './dto/add-voters.dto';
 import { IVoter } from 'types';
@@ -16,11 +16,12 @@ export class EventsService {
         return this.eventModel.create(createEventDto);
     }
 
-    findByToken(token: string): Promise<Pick<EventDocument, 'id' | 'name' | 'color' | 'genres'>> {
-        return this.eventModel.findOne(
-            { [`voters.${token}`]: { $exists: true } },
-            { name: true, color: true, genres: true },
-        );
+    findByToken(token: string, projection?: ProjectionType<EventDocument>): Promise<Partial<EventDocument>> {
+        return this.eventModel.findOne({ [`voters.${token}`]: { $exists: true } }, projection);
+    }
+
+    async isTokenValid(token: string): Promise<boolean> {
+        return !!(await this.eventModel.findOne({ [`voters.${token}.didVote`]: false }, {}).lean());
     }
 
     async addVoters(id: string, addVotersDto: AddVotersDto): Promise<void> {

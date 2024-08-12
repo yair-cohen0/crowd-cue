@@ -23,8 +23,19 @@ export class EventsController {
     }
 
     @Get('token/:token')
-    findByToken(@Param('token') token: string): Promise<Pick<EventDocument, 'id' | 'genres' | 'name' | 'color'>> {
-        return this.eventsService.findByToken(token);
+    async findByToken(@Param('token') token: string): Promise<Partial<EventDocument>> {
+        const event = await this.eventsService.findByToken(token, {
+            id: true,
+            name: true,
+            color: true,
+            genres: true,
+            voters: true,
+        });
+        if (event?.voters.get(token).didVote) {
+            throw new HttpException('Already Voted', 403);
+        }
+
+        return { id: event.id, color: event.color, genres: event.genres, name: event.name };
     }
 
     @Get()
