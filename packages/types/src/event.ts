@@ -12,6 +12,6 @@ export type IEvent = {
     name: string;
     color: string;
     genres: string[];
-    voters: Record<string, IVoter>;
-    votes: { [key in SelectionTypes]: Record<string, number> };
+    voters: Map<string, IVoter>;
+    votes: { [key in SelectionTypes]: Map<string, number> };
 };

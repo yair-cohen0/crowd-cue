@@ -25,10 +25,10 @@ export class _Event implements Omit<IEvent, 'id'> {
     genres: string[];
 
     @Prop({ type: Map, of: VoterScheme, default: {} })
-    voters: Record<string, IVoter>;
+    voters: Map<string, IVoter>;
 
     @Prop({ type: Map, of: { type: Map, of: Number }, default: { artists: [], genres: [] } })
-    votes: { [key in SelectionTypes]: Record<string, number> };
+    votes: { [key in SelectionTypes]: Map<string, number> };
 }
 
 export const EventScheme = SchemaFactory.createForClass(_Event);

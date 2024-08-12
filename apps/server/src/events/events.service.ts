@@ -5,7 +5,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { _Event, EventDocument } from './schemes/event.scheme';
 import { AddVotersDto } from './dto/add-voters.dto';
-import { IEvent, IVoter } from 'types';
+import { IVoter } from 'types';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -29,16 +29,13 @@ export class EventsService {
             throw new NotFoundException();
         }
 
-        const voters: IEvent['voters'] = event.toJSON().voters;
-        const existingValues: string[] = Object.values(voters).map((voter) => voter.contactValue);
+        const existingValues: string[] = Array.from(event.voters.values()).map((voter) => voter.contactValue);
 
         for (const contactInfo of addVotersDto.contacts) {
             if (!existingValues.includes(contactInfo)) {
-                voters[uuidv4()] = this.createVoter(addVotersDto.contactMethod, contactInfo);
-                existingValues.push(contactInfo);
+                event.voters.set(uuidv4(), this.createVoter(addVotersDto.contactMethod, contactInfo));
             }
         }
-        event.set('voters', voters);
         event.save();
     }
 
