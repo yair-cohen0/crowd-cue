@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Put, HttpException } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -6,6 +6,7 @@ import { EventDocument } from './schemes/event.scheme';
 import { ApiTags } from '@nestjs/swagger';
 import { AddVotersDto } from './dto/add-voters.dto';
 import { ValidateObjectIdPipe } from '../pipes/validate-object-id/validate-object-id-pipe.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('events')
 @Controller('events')
@@ -22,6 +23,7 @@ export class EventsController {
         await this.eventsService.addVoters(id, addVotersDto);
     }
 
+    @UseGuards(AuthGuard('jwt'))
     @Get('token/:token')
     async findByToken(@Param('token') token: string): Promise<Partial<EventDocument>> {
         const event = await this.eventsService.findByToken(token, {

@@ -9,9 +9,11 @@ import { ArtistsModule } from './artists/artists.module';
 import { GenresModule } from './genres/genres.module';
 import { SpotifyModule } from './spotify/spotify.module';
 import { EventsModule } from './events/events.module';
+import { AuthModule } from './auth/auth.module';
 import baseConfig from './config/base';
 import mongoDbConfig from './config/mongoDb';
 import spotifyConfig from './config/spotify';
+import authConfig from './config/auth';
 
 @Module({
     imports: [
@@ -24,13 +26,14 @@ import spotifyConfig from './config/spotify';
         }),
         ConfigModule.forRoot({
             isGlobal: true,
-            load: [baseConfig, mongoDbConfig, spotifyConfig],
+            load: [baseConfig, mongoDbConfig, spotifyConfig, authConfig],
         }),
         MongooseConnectionModule,
         ArtistsModule,
         GenresModule,
         SpotifyModule,
         EventsModule,
+        AuthModule,
     ],
     controllers: [AppController],
     providers: [AppService],
