@@ -39,10 +39,7 @@ export function SearchBar({
                     width: '80%',
                     ...sx,
                 }}
-                onChange={debounce(
-                    (e) => onChange?.(e),
-                    debounceTime,
-                )}
+                onChange={debounce((e) => onChange?.(e), debounceTime)}
             />
         </Box>
     );
