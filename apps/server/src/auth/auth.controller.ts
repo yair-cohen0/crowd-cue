@@ -12,16 +12,16 @@ export class AuthController {
 
     @Post(':token')
     async auth(@Param('token') token: string, @Res({ passthrough: true }) res: Response): Promise<void> {
-        const isDev = this.configService.get('env') === 'development';
-
         await this.authService.validateToken(token);
         const signedToken = this.authService.signToken(token);
 
+        const isDev = this.configService.get('env') === 'development';
+        const oneDay = 1 * 24 * 60 * 1000;
         res.cookie('access_token', signedToken, {
             httpOnly: true,
             secure: false,
             sameSite: isDev ? 'lax' : 'strict',
-            expires: new Date(Date.now() + 1 * 24 * 60 * 1000),
+            expires: new Date(Date.now() + oneDay),
         });
     }
 }

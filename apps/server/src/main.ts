@@ -12,20 +12,24 @@ async function bootstrap() {
 
     const configService = app.get(ConfigService);
     const port = configService.get('port');
+    const isDev = configService.get('env') === 'development';
 
-    app.enableCors({
-        origin: '*',
-    });
+    if (isDev) {
+        app.enableCors({
+            origin: 'http://localhost:5173',
+            credentials: true,
+            exposedHeaders: ['set-cookie'],
+        });
 
+        const config = new DocumentBuilder()
+            .setTitle('Crowd Cue API')
+            .setDescription('The Crowd Cue API description')
+            .setVersion('1.0')
+            .build();
+        const document = SwaggerModule.createDocument(app, config);
+        SwaggerModule.setup('docs', app, document);
+    }
     app.use(cookieParser());
-
-    const config = new DocumentBuilder()
-        .setTitle('Crowd Cue API')
-        .setDescription('The Crowd Cue API description')
-        .setVersion('1.0')
-        .build();
-    const document = SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('docs', app, document);
 
     app.useGlobalPipes(new ValidationPipe({ forbidNonWhitelisted: true, whitelist: true }));
 

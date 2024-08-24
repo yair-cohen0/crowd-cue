@@ -14,7 +14,7 @@ export function Home() {
     const event = useLoaderData() as IEvent;
     useEffect(() => {
         if (!event) {
-            window.location.hash = 'unauthorized';
+            window.location.hash = '';
         }
     }, [event]);
 
