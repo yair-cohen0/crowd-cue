@@ -28,7 +28,7 @@ export class _Event implements Omit<IEvent, 'id'> {
     voters: Map<string, IVoter>;
 
     @Prop({ type: Map, of: { type: Map, of: Number }, default: { artists: [], genres: [] } })
-    votes: { [key in SelectionTypes]: Map<string, number> };
+    votes: Map<SelectionTypes, Map<string, number>>;
 }
 
 export const EventScheme = SchemaFactory.createForClass(_Event);

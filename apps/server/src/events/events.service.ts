@@ -1,12 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, ProjectionType } from 'mongoose';
 import { _Event, EventDocument } from './schemes/event.scheme';
 import { AddVotersDto } from './dto/add-voters.dto';
-import { IVoter } from 'types';
+import { IVoter, SelectionTypes } from 'types';
 import { v4 as uuidv4 } from 'uuid';
+import { VoteDto } from './dto/vote.dto';
 
 @Injectable()
 export class EventsService {
@@ -18,6 +19,28 @@ export class EventsService {
 
     findByToken(token: string, projection?: ProjectionType<EventDocument>): Promise<Partial<EventDocument>> {
         return this.eventModel.findOne({ [`voters.${token}`]: { $exists: true } }, projection);
+    }
+
+    async vote(token: string, voteDto: VoteDto): Promise<void> {
+        const event = await this.findByToken(token);
+
+        if (!voteDto.genres.every((g) => event.genres.includes(g))) {
+            throw new HttpException('Non Conforming Genres', 406);
+        }
+
+        for (const property of Object.keys(voteDto) as SelectionTypes[]) {
+            for (const id of voteDto[property]) {
+                const count = event.votes.get(property).get(id);
+                event.votes.get(property).set(id, (count || 0) + 1);
+            }
+        }
+
+        const voter = event.voters.get(token);
+        voter.didVote = true;
+        voter.selection.set('artists', voteDto.artists);
+        voter.selection.set('genres', voteDto.genres);
+
+        await event.save();
     }
 
     async isTokenValid(token: string): Promise<boolean> {

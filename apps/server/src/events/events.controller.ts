@@ -7,6 +7,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { AddVotersDto } from './dto/add-voters.dto';
 import { ValidateObjectIdPipe } from '../pipes/validate-object-id/validate-object-id-pipe.service';
 import { AuthGuard } from '@nestjs/passport';
+import { VoteDto } from './dto/vote.dto';
 
 @ApiTags('events')
 @Controller('events')
@@ -38,6 +39,12 @@ export class EventsController {
         }
 
         return { id: event.id, color: event.color, genres: event.genres, name: event.name };
+    }
+
+    @UseGuards(AuthGuard('jwt'))
+    @Post('vote/:token')
+    vote(@Param('token') token: string, @Body() voteDto: VoteDto): Promise<void> {
+        return this.eventsService.vote(token, voteDto);
     }
 
     @Get()
