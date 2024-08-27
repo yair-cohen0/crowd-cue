@@ -14,21 +14,33 @@ const router = createHashRouter([
         element: <div>thank you</div>,
     },
     {
-        path: '/*',
-        element: <Home />,
-        loader: async ({ params }) => {
-            const token = params['*'];
-            if (await auth(token)) {
-                useAuthStore.getState().setToken(token);
-                return getEvent(token);
-            } else {
-                return null;
-            }
-        },
+        path: '/already-voted',
+        element: <div>you already voted!</div>,
     },
     {
         path: '/',
         element: <div>unauthorized</div>,
+    },
+    {
+        path: '/*',
+        element: <Home />,
+        loader: async ({ params }) => {
+            const token = params['*'];
+            try {
+                await auth(token);
+                useAuthStore.getState().setToken(token);
+                return getEvent(token);
+            } catch (e) {
+                switch (e.response.data.message) {
+                    case 'Already Voted':
+                        window.location.hash = '/already-voted';
+                        break;
+                    default:
+                        window.location.hash = '';
+                        break;
+                }
+            }
+        },
     },
 ]);
 

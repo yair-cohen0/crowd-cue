@@ -1,4 +1,4 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -44,7 +44,16 @@ export class EventsService {
     }
 
     async isTokenValid(token: string): Promise<boolean> {
-        return !!(await this.eventModel.findOne({ [`voters.${token}.didVote`]: false }, {}).lean());
+        const event = await this.eventModel
+            .findOne({ [`voters.${token}`]: { $exists: true } }, { voters: true })
+            .lean();
+
+        if (!event) {
+            throw new UnauthorizedException();
+        } else if (event.voters[token].didVote) {
+            throw new HttpException('Already Voted', 403);
+        }
+        return true;
     }
 
     async addVoters(id: string, addVotersDto: AddVotersDto): Promise<void> {
