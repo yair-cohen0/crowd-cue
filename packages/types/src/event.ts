@@ -1,5 +1,6 @@
 export type SelectionTypes = 'artists' | 'genres';
-export type Selection = Map<SelectionTypes, string[]>;
+export type SelectionObject = { [key in SelectionTypes]: string[] };
+export type Selection = Map<keyof SelectionObject, SelectionObject[SelectionTypes]>;
 export type IVoter = {
     contactMethod: 'sms' | 'email';
     contactValue: string;

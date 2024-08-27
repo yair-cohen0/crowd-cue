@@ -4,9 +4,7 @@ import './index.scss';
 import { ArtistCarousel } from './artistCarousle.tsx';
 import { SearchBar } from './searchBar.tsx';
 import { useEffect, useState } from 'react';
-import { useSelectionStore } from '../../stores/selections.store';
 import { Submit } from './submit';
-import { SubmitDialog } from './submitDialog';
 import { useLoaderData } from 'react-router-dom';
 import { IEvent } from 'types';
 
@@ -20,21 +18,6 @@ export function Home() {
 
     const [artistTerm, setArtistTerm] = useState<string>();
     const [genreTerm, setGenreTerm] = useState<string>();
-
-    const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
-    const { selected } = useSelectionStore();
-
-    const handleOpenSubmitDialog = () => {
-        setIsSubmitDialogOpen(true);
-    };
-
-    const handleCloseSubmitDialog = () => {
-        setIsSubmitDialogOpen(false);
-    };
-
-    const sendSelection = () => {
-        console.log(selected);
-    };
 
     return (
         <>
@@ -80,13 +63,7 @@ export function Home() {
 
             <ArtistCarousel searchTerm={artistTerm} />
 
-            <Submit handleClick={handleOpenSubmitDialog} />
-
-            <SubmitDialog
-                isOpen={isSubmitDialogOpen}
-                handleClose={handleCloseSubmitDialog}
-                handleSubmit={sendSelection}
-            />
+            <Submit />
         </>
     );
 }

@@ -1,36 +1,32 @@
+import { SelectionObject } from 'types';
 import { create } from 'zustand';
 
-interface ISelection {
-    genres: string[];
-    artists: string[];
-}
-
 interface ISelectionStore {
-    selected: ISelection;
+    selection: SelectionObject;
     select: (id: string, type: 'genre' | 'artist') => void;
     unselect: (id: string, type: 'genre' | 'artist') => void;
 }
 
 export const useSelectionStore = create<ISelectionStore>((set) => ({
-    selected: {
+    selection: {
         artists: [],
         genres: [],
     },
     select: (id, type) =>
         set((state) => {
             if (type === 'genre') {
-                state.selected.genres.push(id);
+                state.selection.genres.push(id);
             } else if (type === 'artist') {
-                state.selected.artists.push(id);
+                state.selection.artists.push(id);
             }
             return state;
         }),
     unselect: (id, type) =>
         set((state) => {
             if (type === 'genre') {
-                state.selected.genres = state.selected.genres.filter((g) => g !== id);
+                state.selection.genres = state.selection.genres.filter((g) => g !== id);
             } else if (type === 'artist') {
-                state.selected.artists = state.selected.artists.filter((a) => a !== id);
+                state.selection.artists = state.selection.artists.filter((a) => a !== id);
             }
             return state;
         }),

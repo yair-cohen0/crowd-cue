@@ -4,16 +4,23 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { createHashRouter, RouterProvider } from 'react-router-dom';
 import { auth } from './queries/auth.query.ts';
 import { getEvent } from './queries/event.query.ts';
+import { useAuthStore } from './stores/auth.store.ts';
 
 const queryClient = new QueryClient();
 
 const router = createHashRouter([
     {
+        path: '/success',
+        element: <div>thank you</div>,
+    },
+    {
         path: '/*',
         element: <Home />,
         loader: async ({ params }) => {
-            if (await auth(params['*'])) {
-                return getEvent(params['*']);
+            const token = params['*'];
+            if (await auth(token)) {
+                useAuthStore.getState().setToken(token);
+                return getEvent(token);
             } else {
                 return null;
             }
