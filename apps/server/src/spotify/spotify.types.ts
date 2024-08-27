@@ -1,4 +1,4 @@
-export type ISpotifyArtist = {
+export interface ISpotifyArtist {
     external_urls: Record<string, string>;
     followers: {
         href: string;
@@ -16,4 +16,4 @@ export type ISpotifyArtist = {
     popularity: number;
     type: string;
     uri: string;
-};
+}
