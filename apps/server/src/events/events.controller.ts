@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Put, Res } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -6,8 +6,9 @@ import { EventDocument } from './schemes/event.scheme';
 import { ApiTags } from '@nestjs/swagger';
 import { AddVotersDto } from './dto/add-voters.dto';
 import { ValidateObjectIdPipe } from '../pipes/validate-object-id/validate-object-id-pipe.service';
-import { AuthGuard } from '@nestjs/passport';
 import { VoteDto } from './dto/vote.dto';
+import { Token } from '../auth/token.decorator';
+import { Response } from 'express';
 
 @ApiTags('events')
 @Controller('events')
@@ -19,14 +20,23 @@ export class EventsController {
         return this.eventsService.create(createEventDto);
     }
 
+    @Post('vote')
+    async vote(
+        @Token() token: string,
+        @Body() voteDto: VoteDto,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<void> {
+        await this.eventsService.vote(token, voteDto);
+        res.cookie('access_token', '');
+    }
+
     @Put('/voters:id')
     async addVoters(@Param('id', ValidateObjectIdPipe) id: string, @Body() addVotersDto: AddVotersDto): Promise<void> {
         await this.eventsService.addVoters(id, addVotersDto);
     }
 
-    @UseGuards(AuthGuard('jwt'))
-    @Get('token/:token')
-    async findByToken(@Param('token') token: string): Promise<Partial<EventDocument>> {
+    @Get('token')
+    async findByToken(@Token() token: string): Promise<Partial<EventDocument>> {
         const event = await this.eventsService.findByToken(token, {
             id: true,
             name: true,
@@ -39,12 +49,6 @@ export class EventsController {
         }
 
         return { id: event.id, color: event.color, genres: event.genres, name: event.name };
-    }
-
-    @UseGuards(AuthGuard('jwt'))
-    @Post('vote/:token')
-    vote(@Param('token') token: string, @Body() voteDto: VoteDto): Promise<void> {
-        return this.eventsService.vote(token, voteDto);
     }
 
     @Get()

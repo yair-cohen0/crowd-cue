@@ -11,14 +11,14 @@ export class AuthService {
         private readonly jwtService: JwtService,
     ) {}
 
-    async validateToken(token: string): Promise<boolean> {
+    async validateToken(token: string): Promise<{ token: string }> {
         const adminToken = this.configService.get('auth.adminToken');
 
         const isAuth = (adminToken && adminToken === token) || (await this.eventsService.isTokenValid(token));
         if (!isAuth) {
             throw new UnauthorizedException();
         }
-        return true;
+        return { token };
     }
 
     signToken(token: string): string {

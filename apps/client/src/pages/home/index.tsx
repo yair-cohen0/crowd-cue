@@ -12,7 +12,7 @@ export function Home() {
     const event = useLoaderData() as IEvent;
     useEffect(() => {
         if (!event) {
-            window.location.hash = '';
+            window.location.hash = 'unauthorized';
         }
     }, [event]);
 
@@ -38,7 +38,7 @@ export function Home() {
                         textAlign: 'center',
                     }}
                 >
-                    Avishag & Noam’s Wedding
+                    {event.name}
                 </Typography>
             </Box>
             <SearchBar

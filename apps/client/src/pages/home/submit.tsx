@@ -4,7 +4,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useSelectionStore } from '../../stores/selections.store.ts';
 import { useMutation } from 'react-query';
 import { sendVote } from '../../queries/vote.mutation.ts';
-import { useAuthStore } from '../../stores/auth.store.ts';
 import { SelectionObject } from 'types';
 
 export function Submit() {
@@ -21,13 +20,12 @@ export function Submit() {
     };
 
     const voteMutation = useMutation({
-        mutationFn: ({ token, selection }: { token: string; selection: SelectionObject }) => sendVote(token, selection),
+        mutationFn: ({ selection }: { selection: SelectionObject }) => sendVote(selection),
     });
 
-    const { token } = useAuthStore();
     const sendSelection = useCallback(() => {
-        voteMutation.mutate({ token, selection });
-    }, [token, selection]);
+        voteMutation.mutate({ selection });
+    }, [selection]);
 
     useEffect(() => {
         switch (voteMutation.status) {
@@ -35,7 +33,7 @@ export function Submit() {
                 window.location.hash = 'success';
                 break;
             case 'error':
-                window.location.hash = '';
+                window.location.hash = 'unauthorized';
                 break;
         }
     }, [voteMutation.status]);

@@ -1,7 +1,8 @@
-import { Controller, Param, Post, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
+import { Public } from './public.metadata';
 
 @Controller('auth')
 export class AuthController {
@@ -10,8 +11,9 @@ export class AuthController {
         private readonly configService: ConfigService,
     ) {}
 
-    @Post(':token')
-    async auth(@Param('token') token: string, @Res({ passthrough: true }) res: Response): Promise<void> {
+    @Public()
+    @Post('')
+    async auth(@Body('token') token: string, @Res({ passthrough: true }) res: Response): Promise<void> {
         await this.authService.validateToken(token);
         const signedToken = this.authService.signToken(token);
 

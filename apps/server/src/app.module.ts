@@ -14,6 +14,8 @@ import baseConfig from './config/base';
 import mongoDbConfig from './config/mongoDb';
 import spotifyConfig from './config/spotify';
 import authConfig from './config/auth';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
     imports: [
@@ -36,6 +38,12 @@ import authConfig from './config/auth';
         AuthModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_GUARD,
+            useClass: JwtAuthGuard,
+        },
+    ],
 })
 export class AppModule {}

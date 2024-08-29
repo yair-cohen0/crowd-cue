@@ -1,6 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 
@@ -18,19 +18,10 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             ]),
             ignoreExpiration: false,
             secretOrKey: configService.get('auth.secret'),
-            passReqToCallback: true,
         });
     }
 
-    validate(request, { token }) {
-        const adminToken = this.configService.get('auth.adminToken');
-        if (adminToken && adminToken === token) {
-            return true;
-        }
-
-        if (token !== request.params.token) {
-            throw new UnauthorizedException();
-        }
+    validate({ token }) {
         return this.authService.validateToken(token);
     }
 }
