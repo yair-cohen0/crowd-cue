@@ -12,13 +12,16 @@ export class AuthService {
     ) {}
 
     async validateToken(token: string): Promise<{ token: string }> {
-        const adminToken = this.configService.get('auth.adminToken');
-
-        const isAuth = (adminToken && adminToken === token) || (await this.eventsService.isTokenValid(token));
+        const isAuth = this.isAdmin(token) || (await this.eventsService.isTokenValid(token));
         if (!isAuth) {
             throw new UnauthorizedException();
         }
         return { token };
+    }
+
+    isAdmin(token: string): boolean {
+        const adminToken = this.configService.get('auth.adminToken');
+        return adminToken && adminToken === token;
     }
 
     signToken(token: string): string {

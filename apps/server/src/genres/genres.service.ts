@@ -17,11 +17,22 @@ export class GenresService {
         return this.genreModel.find().skip(skip).limit(limit);
     }
 
-    findByName(name: string, skip: number, limit: number): Promise<GenreDocument[]> {
-        return this.genreModel
-            .find({ name: { $regex: name, $options: 'i' } })
-            .skip(skip)
-            .limit(limit);
+    findByFilters(
+        { ids, name }: Partial<{ ids: string[]; name: string }>,
+        skip: number,
+        limit: number,
+    ): Promise<GenreDocument[]> {
+        const query = this.genreModel.find();
+
+        if (ids) {
+            query.where({ _id: { $in: ids } });
+        }
+
+        if (name) {
+            query.where({ name: { $regex: name, $options: 'i' } });
+        }
+
+        return query.skip(skip).limit(limit).exec();
     }
 
     findOne(id: string): Promise<GenreDocument> {

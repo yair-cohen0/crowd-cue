@@ -18,11 +18,18 @@ import { UpdateGenreDto } from './dto/update-genre.dto';
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { GenreDocument } from './schemes/genre.scheme';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Token } from '../auth/token.decorator';
+import { EventsService } from '../events/events.service';
+import { AuthService } from '../auth/auth.service';
 
 @ApiTags('genres')
 @Controller('genres')
 export class GenresController {
-    constructor(private readonly genresService: GenresService) {}
+    constructor(
+        private readonly genresService: GenresService,
+        private readonly eventsService: EventsService,
+        private readonly authService: AuthService,
+    ) {}
 
     @Post()
     @ApiConsumes('multipart/form-data')
@@ -39,15 +46,18 @@ export class GenresController {
     @ApiQuery({ name: 'limit', required: false })
     @ApiQuery({ name: 'skip', required: false })
     @Get()
-    findAll(
+    async findByFilters(
         @Query('name') name: string,
         @Query('limit', new ParseIntPipe({ optional: true })) limit: number,
         @Query('skip', new ParseIntPipe({ optional: true })) skip: number,
+        @Token() token: string,
     ): Promise<GenreDocument[]> {
-        if (name) {
-            return this.genresService.findByName(name, skip, limit);
+        let genreIds = null;
+        if (!this.authService.isAdmin(token)) {
+            genreIds = (await this.eventsService.findByToken(token, { genres: true }))?.genres;
         }
-        return this.genresService.findAll(skip, limit);
+
+        return this.genresService.findByFilters({ ids: genreIds, name }, skip, limit);
     }
 
     @Get(':id')
