@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, Param, Patch, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Res } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
@@ -37,18 +37,12 @@ export class EventsController {
 
     @Get('token')
     async findByToken(@Token() token: string): Promise<Partial<EventDocument>> {
-        const event = await this.eventsService.findByToken(token, {
+        return await this.eventsService.findByToken(token, {
             id: true,
             name: true,
             color: true,
             genres: true,
-            voters: true,
         });
-        if (event?.voters.get(token).didVote) {
-            throw new HttpException('Already Voted', 403);
-        }
-
-        return { id: event.id, color: event.color, genres: event.genres, name: event.name };
     }
 
     @Get()
