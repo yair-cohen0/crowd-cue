@@ -66,7 +66,7 @@ export function ArtistCarousel({ searchTerm }: { searchTerm?: string }) {
     ) : (
         <Slider {...settings}>
             {flattenedArtists.map((artist, index) => (
-                <span ref={index === flattenedArtists.length - 1 ? inViewRef : null} key={artist.spotify_id}>
+                <span ref={index === flattenedArtists.length - 1 ? inViewRef : null} key={artist.spotifyId}>
                     <Artist {...artist} />
                 </span>
             ))}
