@@ -20,13 +20,18 @@ export function Home() {
     const [genreTerm, setGenreTerm] = useState<string>();
 
     return (
-        <>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+            }}
+        >
             <Box
                 sx={{
                     display: 'flex',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    height: '20%',
+                    height: '15vh',
                     mx: '20px',
                 }}
             >
@@ -41,29 +46,34 @@ export function Home() {
                     {event.name}
                 </Typography>
             </Box>
-            <SearchBar
-                title={'Genre'}
-                sx={{
-                    mb: '15px',
-                }}
-                onChange={(e) => setGenreTerm(e.target.value)}
-                debounceTime={1000}
-            />
-            <GenreCarousel searchTerm={genreTerm} />
 
-            <SearchBar
-                title={'Artist'}
-                sx={{
-                    mt: '30px',
-                    mb: '15px',
-                }}
-                onChange={(e) => setArtistTerm(e.target.value)}
-                debounceTime={1000}
-            />
+            <Box sx={{}}>
+                <SearchBar
+                    title={'Genre'}
+                    sx={{
+                        mb: '15px',
+                    }}
+                    onChange={(e) => setGenreTerm(e.target.value)}
+                    debounceTime={1000}
+                />
+                <GenreCarousel searchTerm={genreTerm} />
+            </Box>
 
-            <ArtistCarousel searchTerm={artistTerm} />
+            <Box sx={{ height: '50vh' }}>
+                <SearchBar
+                    title={'Artist'}
+                    sx={{
+                        mt: '30px',
+                        mb: '15px',
+                    }}
+                    onChange={(e) => setArtistTerm(e.target.value)}
+                    debounceTime={1000}
+                />
+
+                <ArtistCarousel searchTerm={artistTerm} />
+            </Box>
 
             <Submit />
-        </>
+        </Box>
     );
 }

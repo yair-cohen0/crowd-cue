@@ -1,75 +1,91 @@
 import { Artist } from './artist.tsx';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useInfiniteQuery } from 'react-query';
 import { getArtists } from '../../queries/artist.query.ts';
-import Slider, { Settings } from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import { useInView } from 'react-intersection-observer';
+import type { Swiper as SwiperClass, SwiperOptions } from 'swiper/types';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { FreeMode, Grid } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/swiper-bundle.css';
+import 'swiper/css/free-mode';
 
 export function ArtistCarousel({ searchTerm }: { searchTerm?: string }) {
-    const limit = 10;
+    const rows = 2;
+    const responsiveConfig: SwiperOptions['breakpoints'] = useMemo(
+        () => ({
+            2000: {
+                slidesPerView: 9,
+            },
+            1024: {
+                slidesPerView: 7,
+            },
+            0: {
+                slidesPerView: 3,
+            },
+        }),
+        [],
+    );
+
+    function findNearestAndRoundDown(target: number, numbers: number[]) {
+        return Math.max(...numbers.filter((num) => num <= target));
+    }
+
+    const slidesToFetch = useMemo(() => {
+        const nearestWidth = findNearestAndRoundDown(window.innerWidth, Object.keys(responsiveConfig).map(Number));
+        return +responsiveConfig[nearestWidth].slidesPerView * rows * 2;
+    }, [responsiveConfig]);
+
+    const fetchArtists = useCallback(
+        ({ pageParam = 0 }) => getArtists({ name: searchTerm, skip: pageParam, limit: slidesToFetch }),
+        [searchTerm, slidesToFetch],
+    );
+
     const {
         data: artists,
         isLoading: artistsLoading,
         fetchNextPage,
     } = useInfiniteQuery({
         queryKey: ['artists', searchTerm],
-        queryFn: async ({ pageParam = 0 }) => getArtists({ name: searchTerm, skip: pageParam as number, limit }),
-        getNextPageParam: (_, allPages) => allPages.length * limit,
+        queryFn: fetchArtists,
+        getNextPageParam: (_, allPages) => allPages.length * slidesToFetch,
     });
-
-    const { ref: inViewRef, entry: inViewEntry } = useInView({ delay: 100 });
-
-    useEffect(() => {
-        if (inViewEntry?.isIntersecting) {
-            fetchNextPage();
-        }
-    }, [inViewEntry?.isIntersecting]);
 
     const flattenedArtists = useMemo(() => artists?.pages.flat() ?? [], [artists]);
 
-    const settings: Settings = useMemo(
-        () => ({
-            swipeToSlide: true,
-            infinite: false,
-            initialSlide: 0,
-            rows: 2,
-            arrows: false,
-            className: 'artists-carousel',
-            responsive: [
-                {
-                    breakpoint: 3000,
-                    settings: {
-                        slidesToShow: 7,
-                    },
-                },
-                {
-                    breakpoint: 1024,
-                    settings: {
-                        slidesToShow: 5,
-                    },
-                },
-                {
-                    breakpoint: 464,
-                    settings: {
-                        slidesToShow: 3,
-                    },
-                },
-            ],
-        }),
-        [],
-    );
+    const handleSlideChange = useCallback((swiper: SwiperClass) => {
+        if (swiper.progress > 0.5) {
+            fetchNextPage();
+        }
+    }, []);
 
     return artistsLoading ? (
         <span>loading</span>
     ) : (
-        <Slider {...settings}>
-            {flattenedArtists.map((artist, index) => (
-                <span ref={index === flattenedArtists.length - 1 ? inViewRef : null} key={artist.spotifyId}>
+        <Swiper
+            grid={{
+                rows,
+                fill: 'column',
+            }}
+            touchRatio={1.5}
+            resistance={true}
+            resistanceRatio={0.6}
+            spaceBetween={10}
+            breakpoints={responsiveConfig}
+            freeMode={true}
+            modules={[FreeMode, Grid]}
+            onSlideChange={(e) => handleSlideChange(e)}
+        >
+            {flattenedArtists.map((artist) => (
+                <SwiperSlide
+                    key={artist.spotifyId}
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                    }}
+                >
                     <Artist {...artist} />
-                </span>
+                </SwiperSlide>
             ))}
-        </Slider>
+        </Swiper>
     );
 }

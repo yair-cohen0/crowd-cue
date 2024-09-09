@@ -33,6 +33,7 @@ export function SearchBar({
                     sx: {
                         borderRadius: '10px',
                         backgroundColor: 'rgba(219.94, 219.94, 219.94, 0.93)',
+                        height: '35px',
                     },
                 }}
                 sx={{

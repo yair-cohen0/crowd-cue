@@ -1,4 +1,4 @@
-import { Box, Card, CardMedia, debounce, Theme, Typography } from '@mui/material';
+import { Box, Card, debounce, Theme, Typography } from '@mui/material';
 import { IArtist } from 'types';
 import TextOverflow from 'react-text-overflow';
 import { useEffect, useState } from 'react';
@@ -22,21 +22,29 @@ export function Artist(artist: IArtist) {
         <Box
             onClick={() => setSelected((prev) => !prev)}
             sx={{
-                mx: '8px',
                 userSelect: 'None',
+                width: '30vw',
+                aspectRatio: 1,
             }}
         >
-            <Card
+            <Box
+                component={'div'}
                 sx={{
+                    aspectRatio: '1',
                     borderRadius: 4,
+                    overflow: 'hidden',
                     position: 'relative',
                 }}
             >
-                <CardMedia
-                    image={artist.picture}
+                <Box
+                    component={'img'}
+                    src={
+                        artist.picture ??
+                        'https://media-fra5-2.cdn.whatsapp.net/v/t61.24694-24/418758122_759367716386884_1470017999843449425_n.jpg?ccb=11-4&oh=01_Q5AaILTiO1dXIaX-HM95o9RyWF84k0NYyp5cp1RMqS2whXAL&oe=66E5406E&_nc_sid=5e03e0&_nc_cat=108'
+                    }
                     sx={{
+                        objectFit: 'cover',
                         width: '100%',
-                        aspectRatio: '1',
                     }}
                 />
                 {selected ? (
@@ -70,11 +78,12 @@ export function Artist(artist: IArtist) {
                 ) : (
                     <></>
                 )}
-            </Card>
+            </Box>
+
             <Typography
                 sx={{
                     textAlign: 'center',
-                    fontSize: { xs: 14, md: 24, lg: 34 },
+                    fontSize: { md: 14, lg: 17 },
                     fontWeight: 'bold',
                     color: '#00000',
                     zIndex: 100,
